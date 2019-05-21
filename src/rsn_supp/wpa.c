@@ -158,7 +158,7 @@ int wpa_eapol_key_send(struct wpa_sm *sm, struct wpa_ptk *ptk,
 	}
 
 	wpa_hexdump(MSG_MSGDUMP, "WPA: TX EAPOL-Key", msg, msg_len);
-	ret = wpa_sm_ether_send(sm, dest, proto, msg, msg_len);
+	ret = wpa_sm_tx_control_port(sm, dest, proto, msg, msg_len);
 	eapol_sm_notify_tx_eapol_key(sm->eapol);
 out:
 	os_free(msg);

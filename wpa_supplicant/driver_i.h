@@ -138,6 +138,14 @@ static inline int wpa_drv_get_ssid(struct wpa_supplicant *wpa_s, u8 *ssid)
 	return -1;
 }
 
+static inline int wpa_drv_tx_contol_port(struct wpa_supplicant *wpa_s,
+                                         const u8 *dest,
+                                         u16 proto, const u8 *buf, size_t len)
+{
+        return wpa_s->driver->tx_control_port(wpa_s->drv_priv, wpa_s->ifname,
+                                              dest, proto, buf, len);
+}
+
 static inline int wpa_drv_set_key(struct wpa_supplicant *wpa_s,
 				  enum wpa_alg alg, const u8 *addr,
 				  int key_idx, int set_tx,

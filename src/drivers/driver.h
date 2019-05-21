@@ -2280,6 +2280,9 @@ struct wpa_driver_ops {
 		       const u8 *seq, size_t seq_len,
 		       const u8 *key, size_t key_len);
 
+        int (*tx_control_port)(void *priv, const char *ifname,
+                               const u8 *dest,
+                               u16 proto, const u8 *buf, size_t len);
 	/**
 	 * init - Initialize driver interface
 	 * @ctx: context to be used when calling wpa_supplicant functions,

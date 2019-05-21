@@ -33,6 +33,8 @@ struct wpa_sm_ctx {
 		       const u8 *key, size_t key_len);
 	void * (*get_network_ctx)(void *ctx);
 	int (*get_bssid)(void *ctx, u8 *bssid);
+	int (*tx_control_port)(void *ctx, const u8 *dest, u16 proto,
+                               const u8 *buf, size_t len);
 	int (*ether_send)(void *ctx, const u8 *dest, u16 proto, const u8 *buf,
 			  size_t len);
 	int (*get_beacon_ie)(void *ctx);

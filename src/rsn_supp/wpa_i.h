@@ -216,6 +216,13 @@ static inline int wpa_sm_get_bssid(struct wpa_sm *sm, u8 *bssid)
 	return sm->ctx->get_bssid(sm->ctx->ctx, bssid);
 }
 
+static inline int wpa_sm_tx_control_port(struct wpa_sm *sm, const u8 *dest,
+                                         u16 proto, const u8 *buf, size_t len)
+{
+	WPA_ASSERT(sm->ctx->ether_send);
+	return sm->ctx->tx_control_port(sm->ctx->ctx, dest, proto, buf, len);
+}
+
 static inline int wpa_sm_ether_send(struct wpa_sm *sm, const u8 *dest,
 				    u16 proto, const u8 *buf, size_t len)
 {

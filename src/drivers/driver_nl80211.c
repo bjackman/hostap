@@ -3007,6 +3007,46 @@ static int nl80211_set_pmk(struct wpa_driver_nl80211_data *drv,
 }
 
 
+/* TODO argument order?? */
+static int driver_nl80211_tx_control_port(void *priv, const char *ifname,
+                                          const u8 *dest,
+                                          u16 proto, const u8 *buf, size_t len)
+{
+	struct i802_bss *bss = priv;
+        struct nl_msg *msg = NULL;
+        int ifindex = if_nametoindex(ifname);
+        int ret = 0;
+
+        wpa_printf(MSG_DEBUG,
+                   "nl80211: tx_control_port "MACSTR" proto=0x%04x len=%zu",
+                   MAC2STR(dest), proto, len);
+
+        msg = nl80211_ifindex_msg(bss->drv, ifindex, 0,
+                                  NL80211_CMD_CONTROL_PORT_FRAME);
+        if (!msg)
+                return -ENOBUFS;
+
+        if (nla_put_u16(msg, NL80211_ATTR_CONTROL_PORT_ETHERTYPE, proto))
+                goto fail;
+        if (nla_put(msg, NL80211_ATTR_MAC, ETH_ALEN, dest))
+                goto fail;
+        if (nla_put(msg, NL80211_ATTR_FRAME, len, buf))
+                goto fail;
+
+        ret = send_and_recv_msgs(bss->drv, msg, NULL, NULL);
+        if (ret)
+                wpa_printf(MSG_DEBUG,
+                           "nl80211: tx_control_port failed: ret=%d (%s)",
+                           ret, strerror(ret));
+
+        return ret;
+
+fail:
+	nl80211_nlmsg_clear(msg);
+	nlmsg_free(msg);
+	return -ENOBUFS;
+}
+
 static int wpa_driver_nl80211_set_key(const char *ifname, struct i802_bss *bss,
 				      enum wpa_alg alg, const u8 *addr,
 				      int key_idx, int set_tx,
@@ -10940,6 +10980,7 @@ const struct wpa_driver_ops wpa_driver_nl80211_ops = {
 	.get_bssid = wpa_driver_nl80211_get_bssid,
 	.get_ssid = wpa_driver_nl80211_get_ssid,
 	.set_key = driver_nl80211_set_key,
+        .tx_control_port = driver_nl80211_tx_control_port,
 	.scan2 = driver_nl80211_scan2,
 	.sched_scan = wpa_driver_nl80211_sched_scan,
 	.stop_sched_scan = wpa_driver_nl80211_stop_sched_scan,

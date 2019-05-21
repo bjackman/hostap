@@ -485,6 +485,13 @@ static int wpa_supplicant_get_bssid(void *ctx, u8 *bssid)
 }
 
 
+static int wpa_supplicant_tx_control_port(void *ctx, const u8 *dest,
+                                          u16 proto, const u8 *buf, size_t len)
+{
+	struct wpa_supplicant *wpa_s = ctx;
+        return wpa_drv_tx_contol_port(wpa_s, dest, proto, buf, len);
+}
+
 static int wpa_supplicant_set_key(void *_wpa_s, enum wpa_alg alg,
 				  const u8 *addr, int key_idx, int set_tx,
 				  const u8 *seq, size_t seq_len,
@@ -1210,6 +1217,7 @@ int wpa_supplicant_init_wpa(struct wpa_supplicant *wpa_s)
 	ctx->set_state = _wpa_supplicant_set_state;
 	ctx->get_state = _wpa_supplicant_get_state;
 	ctx->deauthenticate = _wpa_supplicant_deauthenticate;
+        ctx->tx_control_port = wpa_supplicant_tx_control_port;
 	ctx->set_key = wpa_supplicant_set_key;
 	ctx->get_network_ctx = wpa_supplicant_get_network_ctx;
 	ctx->get_bssid = wpa_supplicant_get_bssid;
